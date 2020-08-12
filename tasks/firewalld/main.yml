@@ -1,0 +1,53 @@
+---
+- name: Ensure firewalld package installed
+  yum:
+    name: firewalld
+    state: present
+
+- name: Find SSH current listening port
+  shell: ss -tulpn | grep sshd | awk '{print $5}' | cut -d ':' -f2 | head -n 1
+  ignore_errors: true
+  changed_when: false
+  register: ssh_port
+
+- name: Check if firewalld is already running
+  shell: pgrep firewalld
+  ignore_errors: true
+  changed_when: false
+  register: firewalld_status
+
+- name: Fail if its not safe to enable firewalld
+  fail:
+    msg: "It's not safe to enable firewalld while SSH is using a custom port "
+  when: firewalld_status.rc != 0 and (ssh_port.stdout != '22')
+
+- name: Ensure firewalld service is started and enabled for auto-start
+  service:
+      name: firewalld 
+      enabled: true 
+      state: started
+
+---
+- name: Ensure TCP IN ports are allowed
+  firewalld:
+      state: enabled
+      immediate: yes 
+      permanent: true 
+      port: "{{ item }}/tcp"
+  loop: "{{ firewall_incoming_tcp_ports }}"
+
+- name: Ensure UDP IN ports are allowed
+  firewalld:
+      state: enabled
+      immediate: yes 
+      permanent: true 
+      port: "{{ item }}/udp"
+  loop: "{{ firewall_incoming_udp_ports }}"
+
+- name: Ensure firewalld rich rules are added
+  firewalld:
+      state: enabled 
+      immediate: yes 
+      permanent: true
+      rich_rule: "rule family=\"{{ item.family }}\" source address=\"{{ item.source_address }}\" port port=\"{{ item.dest_port}}\" protocol=\"{{ item.protocol }}\" accept"
+  loop: "{{ firewall_rich_rules }}"

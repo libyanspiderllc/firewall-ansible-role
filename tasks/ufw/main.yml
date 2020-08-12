@@ -1,0 +1,59 @@
+---
+- name: Install UFW Package
+  apt:
+    name: ufw
+    state: present
+
+- name: Add UFW Incoming TCP Rules
+  ufw:
+    rule: allow
+    to_port: "{{ item }}"
+    proto: tcp
+    direction: in
+  loop: "{{ firewall_incoming_tcp_ports }}"
+
+- name: Add UFW Incoming UDP Rules
+  ufw:
+    rule: allow
+    to_port: "{{ item }}"
+    proto: udp
+    direction: in
+  loop: "{{ firewall_incoming_udp_ports }}"
+
+- name: Add UFW Rich Rules
+  ufw:
+    rule: allow
+    to_port: "{{ item.dest_port }}"
+    proto: "{{ item.protocol }}"
+    from_ip: "{{ item.source_address }}"
+    direction: in
+  loop: "{{ firewall_rich_rules }}"
+
+- name: Check if UFW Status
+  shell: ufw status | grep Status | cut -d' ' -f 2
+  changed_when: false
+  ignore_errors: true
+  register: ufw_status
+
+- name: UFW Status
+  debug:
+    var: ufw_status.stdout
+
+- name: Find SSH current listening port
+  shell: ss -tulpn | grep sshd | awk '{print $5}' | cut -d ':' -f2 | head -n 1
+  ignore_errors: true
+  changed_when: false
+  register: ssh_port
+
+- name: SSH Current listening port
+  debug:
+    var: ssh_port.stdout
+
+- name: Fail if its not safe to activate UFW
+  fail:
+    msg: "It's not safe to activate UFW while SSH is using a custom port "
+  when: ufw_status.stdout != "inactive" and ssh_port.stdout != '22'
+
+- name: Activate and enable UFW on boot
+  ufw:
+    state: enabled

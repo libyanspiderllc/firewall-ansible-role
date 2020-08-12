@@ -1,0 +1,21 @@
+---
+
+- name: Add CSF Incoming TCP Rules
+  include_tasks: tcp_in.yml
+  with_items: "{{ firewall_incoming_tcp_ports }}"
+
+- name: Add CSF Incoming UDP Rules
+  include_tasks: udp_in.yml
+  with_items: "{{ firewall_incoming_udp_ports }}"
+
+- name: Add CSF Outoing TCP Rules
+  include_tasks: tcp_out.yml
+  with_items: "{{ firewall_outgoing_tcp_ports }}"
+
+- name: Add CSF Outgoing UDP Rules
+  include_tasks: udp_out.yml
+  with_items: "{{ firewall_outgoing_udp_ports }}"
+
+- name: Add CSF Rich Rules
+  include_tasks: rich_rules.yml
+  with_items: "{{ firewall_rich_rules }}"
