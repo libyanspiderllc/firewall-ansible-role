@@ -19,3 +19,6 @@
 - name: Add CSF Rich Rules
   include_tasks: rich_rules.yml
   with_items: "{{ firewall_rich_rules }}"
+
+- name: Reload CSF
+  shell: csf -r
