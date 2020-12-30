@@ -20,5 +20,5 @@ firewall_rich_rules: []
 
 # Example
 # firewall_rich_rules:
-#  - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "161", "protocol": "udp"}
-#  - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "5666", "protocol": "tcp"}
+#  - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "161", "protocol": "udp", "comment": "My Server"}
+#  - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "5666", "protocol": "tcp", "comment": "My Server"}
