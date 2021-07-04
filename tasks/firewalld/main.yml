@@ -27,7 +27,6 @@
       enabled: true 
       state: started
 
----
 - name: Ensure TCP IN ports are allowed
   firewalld:
       state: enabled
