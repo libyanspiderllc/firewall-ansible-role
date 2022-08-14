@@ -1,7 +1,11 @@
-Role Name
+Firewall Ansible Role
 =========
 
-Role to configure common firewall rules depending on OS
+Ansible role to configure common software firewall rules depending on OS. Supports the following firewalls:
+- FirewallD
+- UFW
+- ConfigServer Firewall (CSF)
+- Windows Firewall
 
 Requirements
 ------------
@@ -63,5 +67,5 @@ BSD
 Author Information
 ------------------
 
-Ahmed Shibani
+Ahmed Shibani (#shumbashi)
 sheipani@gmail.com

@@ -3,15 +3,25 @@
   stat:
     path: /usr/sbin/csf
   register: csf_installed
+  when: ansible_os_family != 'Windows'
+
+- name: Setting host facts to work around Windows
+  ansible.builtin.set_fact:
+    csf_installed: {'stat': {'exists':false}}
+  when: ansible_os_family == 'Windows'
 
 - name: Include CSF Tasks
   include_tasks: csf/main.yml
-  when: csf_installed.stat.exists == true and ansible_os_family == 'RedHat'
+  when: csf_installed is defined and csf_installed.stat.exists == true and ansible_os_family == 'RedHat' 
 
 - name: Include Firewalld Tasks
   include_tasks: firewalld/main.yml
-  when: csf_installed.stat.exists == false and ansible_os_family == 'RedHat'
+  when: csf_installed is defined and csf_installed.stat.exists == false and ansible_os_family == 'RedHat'
 
 - name: Include Debian Tasks
   include_tasks: ufw/main.yml
   when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+
+- name: Include Windows Tasks
+  include_tasks: windows/main.yml
+  when: ansible_os_family == 'Windows'
