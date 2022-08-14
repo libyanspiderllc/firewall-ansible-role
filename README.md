@@ -15,34 +15,34 @@ None
 Role Variables
 --------------
 
-firewall_incoming_tcp_ports: []
+- `firewall_incoming_tcp_ports: []`
 
+Example
 ```yaml
-# Example
-# firewall_incoming_tcp_ports:
-#  - "22"
-#  - "6934"
+firewall_incoming_tcp_ports:
+ - "22"
+ - "6934"
 ```
 
-firewall_incoming_udp_ports: []
+- `firewall_incoming_udp_ports: []`
 
+Example
 ```yaml
-# Example
-# firewall_incoming_udp_ports:
-#  - "53"
+firewall_incoming_udp_ports:
+ - "53"
 ```
 
-firewall_outgoing_tcp_ports: []
+- `firewall_outgoing_tcp_ports: []`
 
-firewall_outgoing_udp_ports: []
+- `firewall_outgoing_udp_ports: []`
 
-firewall_rich_rules: []
+- `firewall_rich_rules: []`
 
+Example
 ```yaml
-# Example
-# firewall_rich_rules:
-#  - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "161", "protocol": "udp"}
-#  - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "5666", "protocol": "tcp"}
+firewall_rich_rules:
+ - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "161", "protocol": "udp"}
+ - {"family": "ipv4", "source_address": "41.208.72.148/32", "dest_port": "5666", "protocol": "tcp"}
 ```
 
 Dependencies
@@ -56,7 +56,7 @@ Example Playbook
 ```yaml
     - hosts: servers
       roles:
-         - { role: firewall-ansible-role, firewall_incoming_tcp_ports: [22,443] }
+         - { role: shumbashi.firewall_ansible_role, firewall_incoming_tcp_ports: [22,443] }
 ```
 
 License
