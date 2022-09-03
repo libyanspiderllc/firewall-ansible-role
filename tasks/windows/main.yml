@@ -1,55 +1,55 @@
 ---
 - name: Windows | Ensure TCP IN ports are allowed
   win_firewall_rule:
-    name: Allow Inbound connections to port {{item}}/tcp
-    localport: "{{item}}"
+    name: Allow Inbound connections to port {{ item }}/tcp
+    localport: "{{ item }}"
     action: allow
     profiles: domain,private,public
     direction: in
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true
   loop: "{{ firewall_incoming_tcp_ports }}"
 
 - name: Windows | Ensure UDP IN ports are allowed
   win_firewall_rule:
-    name: Allow Inbound connections to port {{item}}/udp
-    localport: "{{item}}"
+    name: Allow Inbound connections to port {{ item }}/udp
+    localport: "{{ item }}"
     action: allow
     profiles: domain,private,public
     direction: in
     protocol: udp
     state: present
-    enabled: yes
+    enabled: true
   loop: "{{ firewall_incoming_udp_ports }}"
 
 - name: Windows | Ensure TCP OUT ports are allowed
   win_firewall_rule:
-    name: Allow Outbound connections to port {{item}}/tcp
-    localport: "{{item}}"
+    name: Allow Outbound connections to port {{ item }}/tcp
+    localport: "{{ item }}"
     action: allow
     profiles: domain,private,public
     direction: out
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true
   loop: "{{ firewall_outgoing_tcp_ports }}"
 
 - name: Windows | Ensure UDP OUT ports are allowed
   win_firewall_rule:
-    name: Allow Outbound connections to port {{item}}/udp
-    localport: "{{item}}"
+    name: Allow Outbound connections to port {{ item }}/udp
+    localport: "{{ item }}"
     action: allow
     profiles: domain,private,public
     direction: out
     protocol: udp
     state: present
-    enabled: yes
+    enabled: true
   loop: "{{ firewall_outgoing_udp_ports }}"
 
 - name: Windows | Ensure rich firewall rules are allowed
   win_firewall_rule:
-    name: Allow rich firewall rule - {{item.source_address}} port {{item.dest_port}}/{{ item.protocol }} - {{item.comment}}
+    name: Allow rich firewall rule - {{ item.source_address }} port {{ item.dest_port }}/{{ item.protocol }} - {{ item.comment }}
     localport: "{{ item.dest_port }}"
     action: allow
     remoteip: "{{ item.source_address }}"
@@ -57,5 +57,5 @@
     direction: in
     protocol: "{{ item.protocol }}"
     state: present
-    enabled: yes
+    enabled: true
   loop: "{{ firewall_rich_rules }}"

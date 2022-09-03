@@ -1,6 +1,6 @@
 ---
 - name: Check if CSF is installed
-  stat:
+  ansible.builtin.stat:
     path: /usr/sbin/csf
   register: csf_installed
   when: ansible_os_family != 'Windows'
@@ -12,16 +12,46 @@
 
 - name: Include CSF Tasks
   include_tasks: csf/main.yml
-  when: csf_installed is defined and csf_installed.stat.exists == true and ansible_os_family == 'RedHat' 
-
-- name: Include Firewalld Tasks
-  include_tasks: firewalld/main.yml
-  when: csf_installed is defined and csf_installed.stat.exists == false and ansible_os_family == 'RedHat'
-
-- name: Include Debian Tasks
-  include_tasks: ufw/main.yml
-  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+  when: csf_installed is defined and csf_installed.stat.exists and ansible_os_family == 'RedHat'
 
 - name: Include Windows Tasks
   include_tasks: windows/main.yml
   when: ansible_os_family == 'Windows'
+
+- name: Check if FirewallD is installed
+  ansible.builtin.stat:
+    path: /usr/bin/firewall-cmd
+  register: firewalld_installed
+  when: ansible_os_family == 'RedHat' and csf_installed is defined and not csf_installed.stat.exists
+
+- name: Fail if FirewallD is not installed and playbook var install_firewall_package is not set
+  ansible.builtin.fail:
+    msg: "FirewallD is not installed and the playbook var 'install_firewall_package' is not set"
+  when: >
+    ansible_os_family == 'RedHat' and
+    firewalld_installed is defined and
+    not firewalld_installed.stat.exists and
+    not install_firewall_package
+
+- name: Include Firewalld Tasks
+  include_tasks: firewalld/main.yml
+  when: ansible_os_family == 'RedHat' and csf_installed is defined and csf_installed.stat.exists == false
+
+- name: Check if UFW is installed
+  ansible.builtin.stat:
+    path: /usr/sbin/ufw
+  register: ufw_installed
+  when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and csf_installed is defined and not csf_installed.stat.exists
+
+- name: Fail if UFW is not installed and playbook var install_firewall_package is not set
+  ansible.builtin.fail:
+    msg: "UFW is not installed and the playbook var 'install_firewall_package' is not set"
+  when: >
+    (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and
+    ufw_installed is defined and
+    not ufw_installed.stat.exists and
+    not install_firewall_package
+
+- name: Include Debian Tasks
+  include_tasks: ufw/main.yml
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'

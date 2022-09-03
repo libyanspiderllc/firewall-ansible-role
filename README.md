@@ -56,7 +56,7 @@ Example Playbook
 ```yaml
     - hosts: servers
       roles:
-         - { role: shumbashi.firewall_ansible_role, firewall_incoming_tcp_ports: [22,443] }
+         - { role: libyanspider.firewall_ansible_role, firewall_incoming_tcp_ports: [22,443] }
 ```
 
 License

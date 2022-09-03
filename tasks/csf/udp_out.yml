@@ -1,16 +1,16 @@
 ---
-- name: Check if port {{item}} is already allowed in CSF UDP_OUT
-  shell: grep -e ^UDP_OUT /etc/csf/csf.conf | grep "{{item}}"
+- name: Check if port {{ item }} is already allowed in CSF UDP_OUT
+  ansible.builtin.shell: grep -e ^UDP_OUT /etc/csf/csf.conf | grep "{{ item }}"
   register: port_allowed
   changed_when: false
   ignore_errors: true
 
-- name: Add port {{item}} to CSF UDP_OUT
-  lineinfile:
-    path: /etc/csf/csf.conf # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
-    backrefs: true # not required. Used with C(state=present). If set, C(line) can contain backreferences (both positional and named) that will get populated if the C(regexp) matches. This flag changes the operation of the module slightly; C(insertbefore) and C(insertafter) will be ignored, and if the C(regexp) doesn't match anywhere in the file, the file will be left unchanged. If the C(regexp) does match, the last matching line will be replaced by the expanded line parameter.
-    state: present # not required. choices: absent;present. Whether the line should be there or not.
-    regexp: '^UDP_OUT = "(.*)"' # not required. The regular expression to look for in every line of the file. For C(state=present), the pattern to replace if found. Only the last line found will be replaced. For C(state=absent), the pattern of the line(s) to remove. Uses Python regular expressions. See U(http://docs.python.org/2/library/re.html).
-    backup: no # not required. Create a backup file including the timestamp information so you can get the original file back if you somehow clobbered it incorrectly.
-    line: 'UDP_OUT = "\1,{{item}}"' # not required. Required for C(state=present). The line to insert/replace into the file. If C(backrefs) is set, may contain backreferences that will get expanded with the C(regexp) capture groups if the regexp matches.
+- name: Add port {{ item }} to CSF UDP_OUT
+  ansible.builtin.lineinfile:
+    path: /etc/csf/csf.conf
+    backrefs: true
+    state: present
+    regexp: '^UDP_OUT = "(.*)"'
+    backup: false
+    line: 'UDP_OUT = "\1,{{ item }}"'
   when: port_allowed.rc !=0

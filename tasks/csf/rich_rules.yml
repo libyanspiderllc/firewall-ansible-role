@@ -1,16 +1,16 @@
 ---
 - name: Check if rich rule for {{ item.source_address }} and port {{ item.dest_port }} is already created in csf.allow
-  shell: grep -e ^"{{ item.protocol }}|in|d={{ item.dest_port }}|s={{ item.source_address }}" /etc/csf/csf.allow
+  ansible.builtin.shell: grep -e ^"{{ item.protocol }}|in|d={{ item.dest_port }}|s={{ item.source_address }}" /etc/csf/csf.allow
   register: rich_rule
   changed_when: false
   ignore_errors: true
 
 - name: Add rich rule for {{ item.source_address }} and port {{ item.dest_port }} to csf.allow
-  lineinfile:
-    path: /etc/csf/csf.allow # required. The file to modify.,Before 2.3 this option was only usable as I(dest), I(destfile) and I(name).
-    backrefs: false # not required. Used with C(state=present). If set, C(line) can contain backreferences (both positional and named) that will get populated if the C(regexp) matches. This flag changes the operation of the module slightly; C(insertbefore) and C(insertafter) will be ignored, and if the C(regexp) doesn't match anywhere in the file, the file will be left unchanged. If the C(regexp) does match, the last matching line will be replaced by the expanded line parameter.
-    state: present # not required. choices: absent;present. Whether the line should be there or not.
-    backup: no # not required. Create a backup file including the timestamp information so you can get the original file back if you somehow clobbered it incorrectly.
-    line: "{{ item.protocol }}|in|d={{ item.dest_port }}|s={{ item.source_address }} # {{ item.comment }}" # not required. Required for C(state=present). The line to insert/replace into the file. If C(backrefs) is set, may contain backreferences that will get expanded with the C(regexp) capture groups if the regexp matches.
+  ansible.builtin.lineinfile:
+    path: /etc/csf/csf.allow
+    backrefs: false
+    state: present
+    backup: false
+    line: "{{ item.protocol }}|in|d={{ item.dest_port }}|s={{ item.source_address }} #{{ item.comment }}"
   when: rich_rule.rc !=0
-  notify: reload csf
+  # notify: reload csf

@@ -21,4 +21,5 @@
   with_items: "{{ firewall_rich_rules }}"
 
 - name: Reload CSF
-  shell: csf -r
+  ansible.builtin.shell: csf -r
+  

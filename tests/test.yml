@@ -1,5 +1,11 @@
 ---
-- hosts: localhost
+- hosts: all
+  become: true
   remote_user: root
+  vars:
+    firewall_incoming_tcp_ports:
+      - 1234
+    firewall_rich_rules:
+      - {"family": "ipv4", "source_address": "41.208.72.222/32", "dest_port": "5666", "protocol": "tcp", "comment": "My Server"}
   roles:
-    - firewall-ansible-role
+    - ../.././

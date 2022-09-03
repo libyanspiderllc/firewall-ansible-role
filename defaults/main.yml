@@ -1,4 +1,6 @@
 ---
+install_firewall_package: false # Set to true if you want the playbook to install FirewallD or UFW if not already installed
+
 firewall_incoming_tcp_ports: []
 
 # Example
