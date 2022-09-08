@@ -22,7 +22,7 @@
   ansible.builtin.stat:
     path: /usr/bin/firewall-cmd
   register: firewalld_installed
-  when: ansible_os_family == 'RedHat' and csf_installed is defined and not csf_installed.stat.exists
+  when: ansible_os_family == 'RedHat'
 
 - name: Fail if FirewallD is not installed and playbook var install_firewall_package is not set
   ansible.builtin.fail:
@@ -31,7 +31,9 @@
     ansible_os_family == 'RedHat' and
     firewalld_installed is defined and
     not firewalld_installed.stat.exists and
-    not install_firewall_package
+    not install_firewall_package and
+    csf_installed is defined and
+    not csf_installed.stat.exists
 
 - name: Include Firewalld Tasks
   include_tasks: firewalld/main.yml
@@ -41,7 +43,7 @@
   ansible.builtin.stat:
     path: /usr/sbin/ufw
   register: ufw_installed
-  when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and csf_installed is defined and not csf_installed.stat.exists
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
 
 - name: Fail if UFW is not installed and playbook var install_firewall_package is not set
   ansible.builtin.fail:
@@ -50,7 +52,9 @@
     (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and
     ufw_installed is defined and
     not ufw_installed.stat.exists and
-    not install_firewall_package
+    not install_firewall_package and
+    csf_installed is defined and
+    not csf_installed.stat.exists
 
 - name: Include Debian Tasks
   include_tasks: ufw/main.yml
